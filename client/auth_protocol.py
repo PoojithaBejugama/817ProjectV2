@@ -1,32 +1,43 @@
-import socket
+import os
 import json
-from auth_protocol import start_key_exchange
-from key_derivation import derive_keys
-from transaction_interface import transaction_loop
+import hmac
+import hashlib
+from utils import encrypt, decrypt, generate_nonce, load_user_key
 
 # =============================
-# Point 1: ATM Client CLI
-# Connects to the server and initiates login + secure session
+# Point 2: Authenticated Key Distribution Protocol (Client Side)
+# Mirrors server-side protocol to establish Master Secret
 # =============================
 
-HOST = '127.0.0.1'
-PORT = 65432
+def start_key_exchange(sock, username):
+    nonce_c = generate_nonce()
 
-def main():
-    print("\n=== Welcome to Secure ATM ===")
-    username = input("Enter username: ")
+    # Step 1: Send ClientHello {username, nonce_c}
+    client_hello = {
+        'username': username,
+        'nonce': nonce_c.hex()
+    }
+    sock.sendall(json.dumps(client_hello).encode())
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.connect((HOST, PORT))
+    # Step 2: Receive ServerHello = ENC_K_ATM({nonce_c, nonce_s})
+    K_ATM = load_user_key(username)
+    enc_response = sock.recv(4096)
+    response_json = decrypt(K_ATM, enc_response)
+    data = json.loads(response_json.decode())
+    received_nonce_c = bytes.fromhex(data['nonce_c'])
+    nonce_s = bytes.fromhex(data['nonce_s'])
 
-        # Begin authenticated key exchange (Point 2)
-        master_secret = start_key_exchange(s, username)
+    if received_nonce_c != nonce_c:
+        raise Exception("Server failed to prove identity")
 
-        # Derive keys for encryption and MAC (Point 3)
-        k_enc, k_mac = derive_keys(master_secret)
+    # Step 3: Send back ENC_K_ATM({nonce_s})
+    confirmation = json.dumps({
+        'nonce_s': nonce_s.hex()
+    }).encode()
+    sock.sendall(encrypt(K_ATM, confirmation))
 
-        # Enter secure transaction loop (Point 4)
-        transaction_loop(s, k_enc, k_mac)
+    # Create Master Secret: MS = HMAC(K_ATM, nonce_c || nonce_s)
+    ms_input = nonce_c + nonce_s
+    master_secret = hmac.new(K_ATM, ms_input, hashlib.sha256).digest()
 
-if __name__ == '__main__':
-    main()
+    return master_secret
