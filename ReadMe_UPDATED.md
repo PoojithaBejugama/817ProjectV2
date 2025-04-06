@@ -21,8 +21,8 @@ Project_2025_CLI_Banking_System/
 
 This is a CLI-based secure banking system for COE817 Project 2025. It simulates secure communication between a central bank server and ATM clients using symmetric cryptography.
 
-## Running it
-###Environment Setup
+
+## Environment Setup
 1. Create and activate a virtual environment:
     ```bash
     python -m venv venv
@@ -34,26 +34,21 @@ This is a CLI-based secure banking system for COE817 Project 2025. It simulates 
         ```
     ```
 
-3. Install the dependencies:
-    ```bash
-    pip install -r requirements.txt
-
-
-## 🔧 Setup
-
-### 1. Install dependencies
+2. Install dependencies
 ```bash
 pip install cryptography
 ```
 
-### 2. Prepare user key file
+3. Prepare user key file
 Create a file named `user_keys.json` in the `server/` folder:
 ```json
 {
   "alice": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff",
-  "bob":   "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff"
+  "bob":   "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+  "charlie": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
 }
 ```
+
 
 ## 🚀 Running the System
 
