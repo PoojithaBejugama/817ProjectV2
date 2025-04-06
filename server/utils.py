@@ -57,11 +57,20 @@ def verify_mac(mac_key, data, received_mac):
 
 # === Key Management ===
 
+# def load_user_key(username):
+#     # Simulated user key store (pre-shared keys)
+#     with open('server/user_keys.json', 'r') as f:
+#         key_store = json.load(f)
+#     return bytes.fromhex(key_store[username])
+
 def load_user_key(username):
-    # Simulated user key store (pre-shared keys)
     with open('server/user_keys.json', 'r') as f:
         key_store = json.load(f)
-    return bytes.fromhex(key_store[username])
+        print(f"Loaded key store: {key_store}")  # Debugging line
+    key_bytes = bytes.fromhex(key_store[username])
+    if len(key_bytes) != 32:
+        raise ValueError(f"Invalid key length ({len(key_bytes)} bytes) for user {username}. Must be 32.")
+    return key_bytes
 
 def get_audit_key():
     # Use fixed audit key (could be stored securely elsewhere)

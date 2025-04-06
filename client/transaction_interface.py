@@ -56,4 +56,4 @@ def transaction_loop(sock, k_enc, k_mac):
 
         decrypted_response = decrypt(k_enc, encrypted_response)
         result = json.loads(decrypted_response.decode())
-        print("[Server]:", result['result'])
+        print("[Message from Server]:", result['result'])

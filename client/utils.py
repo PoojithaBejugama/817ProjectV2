@@ -49,4 +49,5 @@ def verify_mac(mac_key, data, received_mac):
 def load_user_key(username):
     with open('server/user_keys.json', 'r') as f:
         key_store = json.load(f)
+        print(f"[client]Loaded key for {username}: {key_store[username]}")
     return bytes.fromhex(key_store[username])
