@@ -36,6 +36,7 @@ def encrypt(key, plaintext):
     cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
     encryptor = cipher.encryptor()
     ciphertext = encryptor.update(pad(plaintext)) + encryptor.finalize()
+    
     return iv + ciphertext  # IV prepended for decryption
 
 def decrypt(key, ciphertext):
@@ -73,5 +74,4 @@ def load_user_key(username):
     return key_bytes
 
 def get_audit_key():
-    # Use fixed audit key (could be stored securely elsewhere)
-    return b"AUDIT_LOG_SECRET_KEY_32BYTES_LONG_FIXED"
+    return b"AUDIT_LOG_SECRET_KEY_32_BYTES!!!"
