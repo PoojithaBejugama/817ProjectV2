@@ -18,7 +18,8 @@ PORT = 65432
 def main():
     print("\n=== Welcome to Secure ATM ===\n")
     username = input("Enter username: ")  
-
+#get password here too
+    #password = input("Enter password: ")  # Prompt for password
 
     # Create a TCP socket and connect to the server
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -27,7 +28,7 @@ def main():
 
         # Begin authenticated key exchange (Point 2)
         # This step establishes a shared Master Secret (MS) between the client and server
-        master_secret = start_key_exchange(s, username)
+        master_secret = start_key_exchange(s, username) #send password here too
 
 
         # Derive keys for encryption and MAC (Point 3)

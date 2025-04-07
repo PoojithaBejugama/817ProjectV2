@@ -74,4 +74,4 @@ def load_user_key(username):
     return key_bytes
 
 def get_audit_key():
-    return b"AUDIT_LOG_SECRET_KEY_32_BYTES!!!"
+    return b"AUDIT_LOG_SECRET_KEY_32_BYTES!!!" # has to be 32 characters long for AES-256

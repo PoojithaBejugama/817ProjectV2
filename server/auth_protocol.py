@@ -30,8 +30,12 @@ def authenticate_and_generate_master_secret(conn):
     # The client sends their username and a randomly generated nonce (nonce_c).
     raw = conn.recv(4096)  
     client_hello = json.loads(raw.decode())  
-    username = client_hello['username']  
-    nonce_c = bytes.fromhex(client_hello['nonce'])  
+    username = client_hello['username']   ##########################check passsord first here
+    nonce_c = bytes.fromhex(client_hello['nonce'])
+    #password = client_hello['password']  # Extract the password from the ClientHello message
+    # Check if the password is correct for the given username
+    # This is a placeholder for the actual password verification logic.
+    # In a real implementation, you would check the password against a secure database or hash.
 
     # Load pre-shared key for this user
     # The server retrieves the pre-shared key (K_ATM) associated with the username.

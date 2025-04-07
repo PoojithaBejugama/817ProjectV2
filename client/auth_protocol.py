@@ -18,7 +18,8 @@ def start_key_exchange(sock, username):
 
     # Step 2: Send ClientHello message containing the username and nonce_c
     # ClientHello = {username, nonce_c}
-    client_hello = {
+    client_hello = { #################include password here too
+        # 'password': password,  # Include password in the ClientHello message
         'username': username,
         'nonce': nonce_c.hex()  # Convert nonce_c to a hexadecimal string for transmission
     }

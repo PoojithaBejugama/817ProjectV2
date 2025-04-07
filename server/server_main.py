@@ -30,7 +30,7 @@ db = {
 }
 
 
-def client_thread(conn, addr):
+def client_thread(conn, addr): #when the server accepts a connection, it creates a new thread to handle the client
     print(f"\nConnected by {addr}")
     try:
         handle_client(conn)
@@ -41,7 +41,8 @@ def client_thread(conn, addr):
         print(f"\nDisconnected {addr}")
 
 
-def handle_client(conn):
+def handle_client(conn): #this is where the server handles all incoming requests from the client
+    ##############passeorsd handler code need to added here
     """
     Handles a connected client by processing encrypted and integrity-protected
     transactions such as deposit, withdraw, balance inquiry, and log viewing.
@@ -56,7 +57,7 @@ def handle_client(conn):
 
     # Step 1: Authenticate the client and establish a shared master secret
     # This ensures the client is legitimate and establishes a secure session.
-    username, master_secret = authenticate_and_generate_master_secret(conn)
+    username, master_secret = authenticate_and_generate_master_secret(conn) #############will also recieve password here
 
     # Step 2: Derive encryption and MAC keys from the master secret
     # These keys are used for secure communication with the client.
@@ -158,7 +159,7 @@ def handle_client(conn):
 
 def check_and_clear_logs():
     log_dir = "server/audit_logs"
-    users = ["alice", "bob", "charlie"]
+    users = ["alice", "bob", "charlie"] #this can be changed and can use db to get a list fo suers so we dont ahve to update the users list each time 
 
     if not os.path.exists(log_dir):
         return  # No logs to check
