@@ -2,10 +2,10 @@ import hmac
 import hashlib
 
 
-# =============================
+# ==============================================
 # Point 3: Key Derivation (Client Side)
 # Same as server logic to derive symmetric keys
-# =============================
+# ==============================================
 
 
 def derive_keys(master_secret):

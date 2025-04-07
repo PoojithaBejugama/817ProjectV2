@@ -7,10 +7,10 @@ from key_derivation import derive_keys
 from utils import get_audit_key
 
 
-# =============================
+# =================================================================================
 # Point 4: Secure Transaction Protocol (Server Side)
 # Handles encrypted & integrity-protected transactions: deposit, withdraw, balance
-# =============================
+# =================================================================================
 
 
 # Simulated in-memory account storage
