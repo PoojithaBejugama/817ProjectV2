@@ -26,12 +26,13 @@ def main():
         server_socket.bind((HOST, PORT))
         server_socket.listen()
         print(f"[*] Bank Server listening on {HOST}:{PORT}")
-
+        
         while True:
             conn, addr = server_socket.accept()
             thread = threading.Thread(target=client_thread, args=(conn, addr))
             thread.start()
             print(f"[~] Active threads: {threading.active_count() - 1}")
+        
 
 if __name__ == '__main__':
     main()

@@ -8,7 +8,7 @@ import hashlib
 
 def derive_keys(master_secret):
     # Encryption Key: HMAC(master_secret, b"encryption")
-    k_enc = hmac.new(master_secret, b"encryption", hashlib.sha256).digest()
+    k_enc = hmac.new(master_secret, b"encryption", hashlib.sha256).digest()[:16]
 
     # MAC Key: HMAC(master_secret, b"mac")
     k_mac = hmac.new(master_secret, b"mac", hashlib.sha256).digest()

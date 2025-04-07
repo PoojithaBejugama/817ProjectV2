@@ -75,3 +75,4 @@ def load_user_key(username):
 def get_audit_key():
     # Use fixed audit key (could be stored securely elsewhere)
     return b"AUDIT_LOG_SECRET_KEY_32BYTES_LONG_FIXED"
+    print(len(get_audit_key())) # Should print 32 bytes
