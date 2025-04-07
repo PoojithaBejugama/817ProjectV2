@@ -7,9 +7,9 @@ from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.backends import default_backend
 
 
-# =============================
+# ====================================
 # Client-side Cryptographic Utilities
-# =============================
+# ====================================
 
 
 BLOCK_SIZE = 128  # Block size for AES encryption (in bits)

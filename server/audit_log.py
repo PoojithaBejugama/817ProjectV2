@@ -3,10 +3,10 @@ import json
 from utils import encrypt, get_audit_key
 
 
-# =============================
+# =====================================================
 # Point 4: Encrypted Audit Logging (Per User)
 # Stores customer actions in separate encrypted files
-# =============================
+# =====================================================
 
 
 AUDIT_LOG_DIR = 'server/audit_logs'  # Directory to store encrypted audit logs

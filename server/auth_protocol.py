@@ -5,10 +5,10 @@ import hashlib
 from utils import encrypt, decrypt, generate_nonce, load_user_key
 
 
-# =============================
+# ===============================================================
 # Point 2: Authenticated Key Distribution Protocol (Server Side)
 # Securely establishes a Master Secret between ATM and Server
-# =============================
+# ===============================================================
 
 
 def authenticate_and_generate_master_secret(conn):

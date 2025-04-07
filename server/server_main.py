@@ -1,6 +1,5 @@
 import socket
 import threading
-from transaction_handler import handle_client
 import os
 import json
 import time
@@ -9,25 +8,48 @@ from audit_log import log_encrypted_action
 from auth_protocol import authenticate_and_generate_master_secret
 from key_derivation import derive_keys
 from utils import get_audit_key
+import hashlib
 
 
-# =============================
+# ==============================================================================
 # Point 1: Multithreaded Bank Server
 # This server listens for incoming ATM client connections,
 # and for each client, it spawns a new thread to handle their session securely.
-# =============================
+# ===============================================================================
+
+
+# Password hashing function
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 
 HOST = '127.0.0.1'  
 PORT = 65432        
 
 
+############ Updated DB with password ############
 # Simulated in-memory account storage
 db = {
-    'alice': 1000,
-    'bob': 500,
-    'charlie': 750
+    'alice': {
+        'password': hash_password('alice123'),
+        'balance': 1000
+    },
+    'bob': {
+        'password': hash_password('bob456'),
+        'balance': 500
+    },
+    'charlie': {
+        'password': hash_password('charlie789'),
+        'balance': 750
+    }
 }
+
+
+def authenticate_user(username, password):
+    user = db.get(username)
+    if user and user['password'] == hash_password(password):
+        return True
+    return False
 
 
 def client_thread(conn, addr):
@@ -52,6 +74,43 @@ def handle_client(conn):
     Returns:
         None
     """
+
+
+
+
+    ################################################ Password Check ################################################
+    try:
+        # Step 1: Prompt the client for their username
+        # Send a message to the client asking them to enter their username
+        conn.send("Enter username: ".encode())
+        username = conn.recv(1024).decode()  # Receive the username entered by the client
+
+        # Step 2: Prompt the client for their password
+        # Send a message to the client asking them to enter their password
+        conn.send("Enter password: ".encode())
+        password = conn.recv(1024).decode()  # Receive the password entered by the client
+
+        # Step 3: Authenticate the user
+        # Check if the provided username and password match the stored credentials
+        if authenticate_user(username, password):
+            # If authentication is successful, notify the client
+            conn.send("AUTH_SUCCESS".encode())
+            print(f"{username} logged in successfully.")  # Log the successful login on the server
+            # Proceed with master secret/authentication logic (not shown here)
+        else:
+            # If authentication fails, notify the client
+            conn.send("AUTH_FAILED".encode())
+            print(f"Failed login attempt for {username}.")  # Log the failed login attempt on the server
+            conn.close()  # Close the connection to the client
+            return  # Stop processing further requests for this client
+
+    except Exception as e:
+        # Handle any unexpected errors during the authentication process
+        print(f"Error handling client: {e}")  # Log the error on the server
+        conn.close()  # Ensure the connection is closed in case of an error
+    #################################################################################################################
+
+
 
 
     # Step 1: Authenticate the client and establish a shared master secret
@@ -94,21 +153,21 @@ def handle_client(conn):
             # Step 7: Process the requested action
             if action == 'deposit':
                 amount = request['amount']
-                db[username] += amount  # Update the user's balance
-                result = f"Deposited ${amount}. New balance: ${db[username]}"
+                db[username]['balance'] += amount  # Update the user's balance
+                result = f"Deposited ${amount}. New balance: ${db[username]['balance']}"
                 log_encrypted_action(username, action, timestamp)  # Log the action securely
 
             elif action == 'withdraw':
                 amount = request['amount']
-                if db[username] >= amount:
-                    db[username] -= amount  # Deduct the amount from the user's balance
-                    result = f"Withdrew ${amount}. New balance: ${db[username]}"
+                if db[username]['balance'] >= amount:
+                    db[username]['balance'] -= amount  # Deduct the amount from the user's balance
+                    result = f"Withdrew ${amount}. New balance: ${db[username]['balance']}"
                 else:
                     result = "Insufficient funds."
                 log_encrypted_action(username, action, timestamp)  # Log the action securely
 
             elif action == 'balance':
-                result = f"Current balance: ${db[username]}"
+                result = f"Current balance: ${db[username]['balance']}"
                 log_encrypted_action(username, action, timestamp)  # Log the action securely
 
             elif action == 'view_log':
@@ -201,7 +260,7 @@ def main():
 
                 thread = threading.Thread(target=client_thread, args=(conn, addr))
                 thread.start()
-                print(f"Active threads: {threading.active_count() - 1}")
+                print(f"\nActive threads: {threading.active_count() - 1}")
 
         except KeyboardInterrupt:
             print("\nShutting down server...")
